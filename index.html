@@ -1,0 +1,376 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Corre a clase · Acatlán · v1.9</title><style>
+*{box-sizing:border-box}body{margin:0;background:#102b29;color:#f7f4e8;font-family:system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:18px}header{display:flex;align-items:center;justify-content:space-between;gap:10px}h1{font-size:clamp(21px,4vw,34px);margin:0}small,.sub{color:#b5cbc1;font-size:13px}button{border:0;border-radius:12px;padding:12px 16px;font-weight:750;background:#e9b95b;color:#182c26;cursor:pointer;touch-action:none}button.secondary{background:#27443e;color:white}.hud{display:flex;gap:9px;margin:16px 0;flex-wrap:wrap}.stat{background:#203f38;border-radius:12px;padding:10px 15px;flex:1;min-width:85px}.stat b{display:block;font-size:22px}.stat span{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#bed0c3}.stage{position:relative;border-radius:18px;overflow:hidden;background:#a4bb82;border:2px solid #54715b}canvas{display:block;width:100%;height:min(62vh,560px);min-height:310px}.overlay{position:absolute;inset:0;background:#102b29db;display:flex;align-items:center;justify-content:center;padding:20px}.card{max-width:420px;text-align:center}.card h2{font-size:30px;margin:0 0 12px}.card p{line-height:1.55;color:#d8e5d7}.hidden{display:none!important}.controls{display:flex;justify-content:space-between;align-items:center;margin:14px 0;gap:12px}.pad{display:grid;grid-template-columns:repeat(3,53px);gap:5px}.pad button{height:45px;background:#e6ebd7;font-size:20px}.run{height:74px;width:95px;background:#e9b95b}.note{font-size:12px;line-height:1.5;color:#b5cbc1;max-width:460px}dialog{max-width:95vw;background:#153b32;color:white;border:1px solid #759581;border-radius:18px}dialog img{max-width:100%;max-height:65vh}#message{min-height:22px;color:#f6cf7a;font-size:14px;margin-top:10px}@media(max-width:600px){main{padding:10px}.sub{display:none}.note{display:none}.stat{padding:8px}.stat b{font-size:19px}canvas{height:54vh}header button{padding:10px;font-size:12px}}
+
+button{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}dialog{width:min(920px,96vw);max-height:92dvh;padding:18px}dialog::backdrop{background:#071e1bd9}dialog h2{margin:0}dialog p{font-size:13px;line-height:1.5}details{margin:16px 0}details img{display:block;margin:12px auto}summary{cursor:pointer;color:#e9b95b}.hud .stat{min-width:0}.stat span{font-size:10px}.controls{touch-action:none}.stage{touch-action:none}#mobilePause{min-width:44px}.run{flex-shrink:0}@media(max-width:600px){header small{font-size:9px}.hud{gap:5px}.stat{padding:8px 6px}.stat b{font-size:18px}.pad{grid-template-columns:repeat(3,48px)}.run{width:84px}.controls{gap:6px}canvas#game{height:49dvh;min-height:290px}main{padding-bottom:env(safe-area-inset-bottom,10px)}}
+
+canvas#game{height:auto!important;min-height:0!important;aspect-ratio:16/10;width:100%}.stage{border-color:#76926b}.card h2{font-size:clamp(17px,3vw,28px)}.card p{font-size:clamp(11px,2vw,15px);margin:8px 0}.overlay{padding:10px}.card button{padding:9px 15px}.card small{font-size:9px}.card p:last-child{display:none}@media(max-width:600px){h1{font-size:22px}header small{font-size:8px}.hud{margin:10px 0}.controls{margin-top:10px}#message{font-size:12px}.card h2{margin:4px 0}.note{display:none}}
+
+.zoomTools{position:absolute;right:12px;top:12px;display:flex;gap:5px;align-items:center;background:#173b33e8;border:1px solid #d9c9a6;border-radius:13px;padding:5px;z-index:2}.zoomTools button{padding:6px 12px;font-size:21px}.zoomTools span{min-width:42px;text-align:center;font-weight:800;font-size:13px}.mapLegend{font-size:12px;color:#f1d591;margin:10px 0}#overview{border:2px solid #9fae84;border-radius:10px;cursor:crosshair;touch-action:manipulation}canvas#game{image-rendering:auto}@media(max-width:600px){canvas#game{aspect-ratio:1566/1050!important}.zoomTools{right:7px;top:7px}.zoomTools button{padding:5px 9px}}
+canvas#game{width:100%!important;height:auto!important;aspect-ratio:1566/1050!important;min-height:0!important;display:block}.stage{aspect-ratio:1566/1050}.overlay{background:rgba(16,43,41,.65)}@media(max-width:600px){.stage{aspect-ratio:1566/1050}.overlay{padding:6px}.card h2{font-size:18px}.card p{font-size:11px;line-height:1.3}.card button{padding:8px 12px}.zoomTools{z-index:4}}
+
+/* v1.3.3: viewport de juego realmente vertical en celulares */
+canvas#game{display:block;width:100%!important;height:auto!important;aspect-ratio:9/16!important;min-height:0!important}
+.stage{width:100%;overflow:hidden}
+@media(min-width:850px){canvas#game{aspect-ratio:4/5!important;max-height:850px}}
+@media(max-width:600px){main{padding:10px}.stage{border-radius:20px}.overlay{padding:14px}.card{max-width:95%}.zoomTools{transform:scale(.85);transform-origin:top right}}
+/* v1.3.4: el CONTENEDOR controla la altura; no el tamaño interno del canvas. */
+.stage{position:relative!important;width:100%!important;aspect-ratio:4/5!important;height:auto!important;min-height:0!important;overflow:hidden!important}
+canvas#game{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;min-height:0!important;max-height:none!important;object-fit:fill!important}
+.stage>.overlay{position:absolute!important;inset:0!important}
+@media(min-width:850px){.stage{aspect-ratio:4/5!important;max-height:none!important}canvas#game{max-height:none!important}}
+
+/* v1.3.5: minimapa dentro del juego, sin cambiar el formato vertical */
+.zoomTools{display:none!important}.miniMapButton{position:absolute;right:9px;top:9px;z-index:5;width:clamp(116px,31%,170px);padding:5px;background:#173b33ee;border:2px solid #e9b95b;border-radius:13px;color:#fff;box-shadow:0 3px 12px #0006;display:flex;flex-direction:column;gap:2px;align-items:stretch;touch-action:manipulation}.miniMapButton canvas{width:100%;height:auto!important;min-height:0!important;aspect-ratio:1566/1050;display:block;border-radius:5px;background:#b0be90}.miniTitle{font-size:10px;letter-spacing:1px;font-weight:900;text-align:left}.miniHint{font-size:9px;color:#f2d991;text-align:center;font-weight:600}@media(max-width:600px){.miniMapButton{width:30%;right:8px;top:8px;padding:4px}.miniTitle{font-size:9px}.miniHint{font-size:8px}}
+
+/* v1.3.7: disposición fija de los tres controles en móvil */
+.controls{display:grid!important;grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr)!important;align-items:center!important;justify-items:center!important;column-gap:8px!important;position:relative!important;width:100%!important}
+.controls #joystick{grid-column:1!important;grid-row:1!important;justify-self:start!important;position:relative!important;margin:0!important}
+.controls #mobilePause{grid-column:2!important;grid-row:1!important;justify-self:center!important;align-self:center!important;position:static!important;transform:none!important;margin:0!important;width:64px!important;height:64px!important;min-width:0!important;padding:0!important;font-size:24px!important;z-index:5!important}
+.controls .run{grid-column:3!important;grid-row:1!important;justify-self:end!important;position:static!important;transform:none!important;margin:0!important;z-index:5!important}
+.controls .note{display:none!important}
+@media(min-width:800px){.controls{grid-template-columns:1fr 90px 1fr!important}}
+@media(max-width:390px){.controls{grid-template-columns:minmax(0,1fr) 55px minmax(0,1fr)!important;gap:3px!important}.controls #mobilePause{width:52px!important;height:56px!important}.controls .run{width:76px!important}}
+</style><style id="joystickStyle">
+#joystick{width:136px;height:145px;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;flex-shrink:0}
+#joystickRing{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#31574a 0%,#1a3c35 75%);border:3px solid #e9b95b;box-shadow:inset 0 0 0 13px #25483f,0 5px 18px #071c184a;display:flex;align-items:center;justify-content:center;position:relative;pointer-events:none}
+#joystickKnob{width:52px;height:52px;border-radius:50%;background:linear-gradient(140deg,#ffe2a0,#e9b95b);border:3px solid #fff0ca;box-shadow:0 3px 10px #071c1866;will-change:transform;pointer-events:none}
+.joyCaption{font-size:10px;letter-spacing:2px;color:#c9d9ca;margin-top:5px;font-weight:700}
+@media(max-width:600px){#joystick{width:112px;height:123px}#joystickRing{width:100px;height:100px}#joystickKnob{width:44px;height:44px}.controls{align-items:center}}
+ 
+.controls{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr)!important}
+.controls #mobilePause{position:relative!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;transform:none!important;grid-column:2!important;grid-row:1!important;margin:0!important}
+.controls #joystick{grid-column:1!important;grid-row:1!important}
+.controls .run{grid-column:3!important;grid-row:1!important;margin:0!important}
+
+/* v1.4.1: evita que el navegador amplíe la página al usar controles táctiles */
+html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+.stage,#game,.controls,#joystick,#joystickRing,#joystickKnob,.run,#mobilePause{touch-action:none!important;-webkit-user-select:none!important;user-select:none!important}
+#game{max-width:100%!important}
+
+/* v1.7: progress, powers and compact results */
+.progressBar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:#ecd398;margin:0 0 10px}
+.powerStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.powerStrip span{background:#203f38;border:1px solid #53745f;border-radius:10px;padding:8px 5px;text-align:center;font-size:11px;color:#d5e2cd}.powerStrip span.active{background:#486031;border-color:#f2cd65;color:#fff4d4}.powerStrip span.used{opacity:.55}
+#resultPanel{margin:10px 0}#grade{font-size:clamp(28px,6vw,48px);font-weight:900;color:#f5ca61;line-height:1.1}#resultStats{font-size:12px;line-height:1.6;margin:8px 0;color:#e0e9d6}#recordNotice{font-size:13px;font-weight:800;color:#f5ca61;min-height:18px}.resultButtons{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}#retry{padding:9px 12px}.card{max-width:470px}.overlay{background:#102b29ed}.card p{line-height:1.4}.powerHelp{font-size:12px;line-height:1.6;color:#d5e2cd}.powerHelp summary{font-weight:700}#buildTag{color:#e9c36a}
+@media(max-width:600px){.progressBar{font-size:10px}.powerStrip span{font-size:10px;padding:7px 3px}.card p{font-size:12px}#resultStats{font-size:11px}.card h2{font-size:20px}.stage{aspect-ratio:4/5!important}}
+</style><style id="unamTheme">
+:root{--navy:#071d49;--panel:#102d60;--blue:#173f7b;--gold:#c8a650;--gold-light:#f2d991;--ink:#fffaf0;--muted:#c7d4ee}
+html,body{background:var(--navy);color:var(--ink)}
+body{background:linear-gradient(160deg,#102f66 0%,#071d49 55%,#051434 100%);min-height:100dvh}
+header{padding-bottom:12px;border-bottom:2px solid var(--gold)}
+h1{color:var(--ink)}h1 span{color:var(--gold-light)!important}
+small,.sub,.note,.joyCaption,.card p,.powerHelp,#resultStats{color:var(--muted)}
+#buildTag,.progressBar,#message,.mapLegend,.miniHint,#recordNotice,#grade,summary{color:var(--gold-light)}
+button{background:linear-gradient(135deg,#e5c576,#c8a650);color:#071d49;box-shadow:0 3px 0 #8f722f}
+button.secondary,.pad button{background:var(--panel);color:var(--gold-light);border:1px solid var(--gold);box-shadow:0 3px 0 #041332}
+button:active{filter:brightness(1.12)}button:focus-visible,summary:focus-visible{outline:3px solid #fff2c9;outline-offset:3px}
+.stat{background:var(--panel);border:1px solid #335386;border-top:3px solid var(--gold)}.stat b{color:var(--ink)}.stat span{color:var(--muted)}
+.stage{border:2px solid var(--gold);background:var(--navy);box-shadow:0 10px 30px #0004}
+.overlay{background:#061a42ed}.card h2{color:var(--ink)}.card small{color:var(--gold-light)}
+.miniMapButton{background:#071d49f2;border-color:var(--gold);color:var(--ink);box-shadow:0 3px 12px #0006}.miniTitle{color:var(--gold-light)}
+.zoomTools{background:var(--panel);border-color:var(--gold)}
+#joystickRing{background:radial-gradient(circle,#244b86 0%,#0c2452 75%);border-color:var(--gold);box-shadow:inset 0 0 0 13px #14386e,0 5px 18px #0004}
+#joystickKnob{background:linear-gradient(140deg,#f9e8b6,#c8a650);border-color:#fff1c9;box-shadow:0 3px 10px #020c2380}
+.run{background:linear-gradient(140deg,#e8cc83,#c8a650);color:var(--navy);border:1px solid #f6e0a2}
+.powerStrip span{background:var(--panel);border-color:#48618a;color:var(--muted)}.powerStrip span.active{background:var(--gold);border-color:var(--gold-light);color:var(--navy)}.powerStrip span.used{opacity:.7}
+dialog{background:var(--navy);color:var(--ink);border:2px solid var(--gold)}dialog::backdrop{background:#020c24db}#overview{border-color:var(--gold)}
+.powerHelp{background:#102d6077;border:1px solid #335386;border-radius:12px;padding:12px}
+
+.briefingFacts{margin:12px 0;padding:10px;border:1px solid #c8a65088;background:#173f7b80;border-radius:10px;color:#f2d991;font-size:12px;line-height:1.6}
+.urgent{color:#ff9b8b!important}.lowEnergy{color:#f2d991!important}
+.card{max-height:100%;overflow-y:auto}.card>small{display:block;font-size:10px;letter-spacing:1px}
+@media(max-width:600px){.briefingFacts{font-size:11px;padding:8px}.card p{line-height:1.5}}
+</style><main><header><div><small id="buildTag">VERSIÓN 1.9 · 10 NIVELES · DIFICULTAD PROGRESIVA</small><h1>Corre a clase <span style="color:#e9b95b">Acatlán</span></h1></div><button class="secondary" id="mapBtn">Mapa general</button></header><div class="hud"><div class="stat"><span>Nivel · <i id="level">1/10</i></span><b id="dest">A6</b></div><div class="stat"><span>Tiempo</span><b id="time">60 s</b></div><div class="stat"><span>Tarea</span><b id="papers">0 / 3</b></div><div class="stat"><span>Energía</span><b id="energy">100%</b></div></div><div class="progressBar"><span id="personalBest">Récord: sin marca</span><span id="runTarget">Meta: 10 sin choques</span></div><div class="stage"><canvas id="game"></canvas><button id="miniMapButton" class="miniMapButton" aria-label="Abrir mapa general"><span class="miniTitle">MAPA · FES</span><canvas id="miniMap" width="420" height="282"></canvas><span class="miniHint">Toca para ampliar</span></button><div id="overlay" class="overlay"><div class="card"><small>EL TIMBRE ESTÁ POR SONAR</small><h2 id="title">Tu primera clase te espera.</h2><p id="description">Diez niveles para llegar al examen final. Empieza recogiendo 3 hojas y llega al A6. Cada nivel trae más tarea o más estudiantes. ¡Busca un 10!</p><div id="briefingFacts" class="briefingFacts hidden"></div><div id="resultPanel" class="hidden"><div id="grade"></div><div id="resultStats"></div><div id="recordNotice" role="status"></div></div><div class="resultButtons"><button id="start">Comenzar recorrido</button><button id="retry" class="secondary hidden">Mejorar mi marca</button></div><p style="font-size:12px">Flechas o WASD · Mayús para correr<br>En celular, mantén presionados los botones.</p></div></div></div><div class="powerStrip" aria-live="polite"><span id="rokyStatus">Roky · escudo</span><span id="sorStatus">Sor Juana · pista</span><span id="pikaStatus">Pikachu · turbo</span></div><div id="message" role="status">Tres hojas, un destino. ¡Busca la entrada marcada en dorado!</div><div class="controls"><div id="joystick" aria-label="Joystick de movimiento"><div id="joystickRing"><div id="joystickKnob"></div></div><span class="joyCaption">MOVER</span></div><button class="secondary" id="mobilePause" aria-label="Pausar">Ⅱ</button><button class="run" data-key="run">CORRER<br>⚡</button><div class="note">Campus reconstruido a partir del plano y la vista satelital. Los obstáculos y las misiones son ficticios. El punto blanco eres tú; el dorado es tu destino. Las hojas se muestran en todo momento.<br><button class="secondary" id="pause">Pausar</button> <button class="secondary" id="restart">Reiniciar</button></div></div><details class="powerHelp"><summary>Cómo conseguir un 10 y usar los poderes</summary><p>Entrega todas las hojas en el 65% del tiempo disponible y sin choques para sacar 10. Si tardas más o chocas, la nota baja; una entrega a tiempo vale al menos 6.</p><p>Acércate a <b>Roky</b>: bloquea un choque. <b>Sor Juana</b>: señala durante 8 segundos la hoja pendiente más cercana; la flecha indica dirección, no un camino libre. <b>Pikachu</b>: 6 segundos de velocidad extra. Cada personaje ayuda una vez por recorrido. Los poderes y el reloj se detienen al pausar.</p><p>Los 10 niveles aumentan de 3 a 6 hojas y de 4 a 20 estudiantes. Los choques restan de 1 a 4 segundos. Antes de cada nivel puedes leer el objetivo sin que corra el reloj. Al comenzar tienes 2.5 segundos de protección contra choques. Tu avance y tus récords se guardan en este navegador cuando el almacenamiento está disponible.</p></details></main><dialog id="mapDialog"><h2>Mapa actualizado · v1.9</h2><p id="mapHelp">Blanco: tú · Dorado: destino · Papeles: tarea pendiente</p><div class="mapLegend">Toca un lugar para poner una marca de navegación</div><canvas id="overview" style="width:100%;height:auto;min-height:0;aspect-ratio:1566/1050"></canvas><button id="closeMap">Volver al juego</button></dialog><script>
+const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),$=s=>document.querySelector(s);const W=1566,H=1050;let vw=900,vh=500,cam={x:0,y:0},zoom=1.6,waypoint=null,mode='ready',lvl=0,timer=60,energy=100,elapsed=0,cool=0,last=0,score=0;const keys={};let p={x:145,y:650,r:10},papers=[];
+const S=2;const b=(n,x,y,w,h)=>({n,x:x*S,y:y*S,w:w*S,h:h*S});
+const buildings=[b('A1',96,165,77,16),b('A2',133,216,20,54),b('A3',184,219,74,16),b('A4',209,128,20,74),b('A5',281,72,18,69),b('A6',247,165,69,19),b('A7',313,129,77,18),b('A8',361,166,20,72),b('A9',407,113,20,86),b('A10',395,206,77,18),b('A11',480,183,22,70),b('A12',438,145,84,18),b('A13',600,254,56,18),b('A14',646,190,22,59),b('A15',192,304,82,20)];
+const landmarks=[
+{n:'Biblioteca',x:291,y:205,w:69,h:74,parts:[[307,207,38,41],[296,246,62,21],[311,264,32,11]],color:'#bd6853'},
+{n:'Posgrados',x:487,y:29,w:71,h:70,parts:[[477,26,78,15],[520,37,37,50],[476,83,72,15]],color:'#bd6853'},
+{n:'Cultural',x:571,y:83,w:74,h:89,parts:[[570,84,70,18],[594,103,50,21],[626,122,25,32],[582,153,69,17],[577,124,18,36]],color:'#b66752'},
+{n:'Teatro Barros Sierra',x:573,y:200,w:66,h:42,parts:[[574,202,59,35]],color:'#c78262'},
+{n:'UIM',x:515,y:205,w:42,h:38,parts:[[517,208,35,31]],color:'#bf7557'},
+{n:'Servicios',x:143,y:65,w:84,h:42,parts:[[142,65,50,37],[190,82,39,20]],color:'#c37f61'},
+{n:'Talleres',x:74,y:217,w:55,h:61,parts:[[77,216,45,13],[75,228,14,38],[112,227,14,43],[88,261,35,13]],color:'#bf795e'},
+{n:'Talleres',x:115,y:109,w:62,h:35,parts:[[114,109,64,36]],color:'#c37f61'},
+{n:'Dirección',x:334,y:79,w:38,h:32,parts:[[333,79,38,33]],color:'#c37f61'},
+{n:'Cafetería / Librería',x:466,y:303,w:43,h:35,parts:[[466,302,40,34]],color:'#b77554'},
+{n:'Gimnasio',x:525,y:311,w:119,h:88,parts:[[526,307,108,86]],color:'#d9ddd0'},
+{n:'Servicios deportivos',x:103,y:305,w:91,h:24,parts:[[105,306,90,21]],color:'#c07554'}
+];
+function insetBuilding(r){let dx=Math.min(12,r.w*.10),dy=Math.min(12,r.h*.10);return {...r,x:r.x+dx,y:r.y+dy,w:r.w-dx*2,h:r.h-dy*2}}
+for(let i=0;i<buildings.length;i++)buildings[i]=insetBuilding(buildings[i]);
+const solids=[...buildings,...landmarks.flatMap(l=>l.parts.map(([x,y,w,h])=>insetBuilding(b('',x,y,w,h))))];
+const barriers=[b('',236,279,30,7),b('',538,244,24,7),b('',183,280,14,7),b('',357,278,13,7),b('',447,276,15,7),b('',604,279,15,7),b('',226,207,7,13),b('',389,222,7,13)];
+const puddles=[{x:370,y:512,rx:26,ry:13},{x:790,y:347,rx:23,ry:12},{x:1060,y:549,rx:29,ry:13}];
+const missions=[
+{n:'A6',label:'Primer día',x:560,y:391,time:55,start:[145,586],pages:[[340,573],[461,487],[472,393]],crowd:4,pace:0.26,penalty:1},
+{n:'A12',label:'Cambio de salón',x:962,y:348,time:52,start:[560,391],pages:[[692,386],[777,511],[1050,350]],crowd:6,pace:0.30,penalty:1},
+{n:'A15',label:'Cruza el campus',x:467,y:670,time:50,start:[962,348],pages:[[1100,571],[794,600],[602,674]],crowd:8,pace:0.35,penalty:2},
+{n:'A3',label:'Tarea extra',x:442,y:494,time:48,start:[467,670],pages:[[340,573],[602,674],[692,386],[472,393]],crowd:10,pace:0.40,penalty:2},
+{n:'A8',label:'Hora concurrida',x:742,y:490,time:46,start:[442,494],pages:[[461,487],[560,391],[962,348],[794,600]],crowd:12,pace:0.45,penalty:2},
+{n:'A10',label:'Entrega doble',x:867,y:472,time:44,start:[742,490],pages:[[692,386],[1050,350],[1100,571],[794,600]],crowd:14,pace:0.50,penalty:3},
+{n:'A7',label:'Semana de parciales',x:703,y:316,time:48,start:[867,472],pages:[[1100,571],[602,674],[340,573],[472,393],[692,386]],crowd:16,pace:0.56,penalty:3},
+{n:'A9',label:'Sin perder el ritmo',x:874,y:380,time:43,start:[703,316],pages:[[472,393],[461,487],[794,600],[1100,571],[1050,350]],crowd:18,pace:0.62,penalty:3},
+{n:'A14',label:'Última llamada',x:1314,y:518,time:42,start:[874,380],pages:[[560,391],[692,386],[794,600],[1100,571],[1050,350]],crowd:19,pace:0.68,penalty:4},
+{n:'A13',label:'El examen final',x:1256,y:568,time:48,start:[1314,518],pages:[[1050,350],[692,386],[472,393],[340,573],[602,674],[1100,571]],crowd:20,pace:0.74,penalty:4}
+];
+const PROGRESS_KEY='acatlan-campaign-v18';
+function activeNpcs(){return npcs.slice(0,missions[lvl].crowd)}
+function saveProgress(next){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify({level:next,points:runPoints}))}catch(e){storageOK=false}}
+
+const paths=[[[73,294],[153,286],[276,286],[398,286],[515,286],[665,286]],[[174,42],[219,45],[266,47],[307,48],[383,48],[440,52],[463,53]],[[89,156],[203,156],[234,156],[273,155],[324,156],[395,156],[448,175],[530,175],[565,174],[637,178],[672,183]],[[162,199],[232,198],[324,198],[395,198],[466,175]],[[159,245],[232,244],[278,245],[280,281]],[[231,47],[232,110],[232,156],[232,244],[234,285],[281,335]],[[320,50],[322,117],[324,198],[350,198],[350,248],[370,282]],[[396,55],[394,156],[394,252],[396,285],[401,301]],[[465,60],[465,118],[530,118],[531,175],[528,259],[528,286]],[[568,91],[564,178],[565,244],[561,286]],[[640,180],[638,245],[668,251],[697,251]],[[154,157],[160,202],[159,285],[170,304]],[[73,294],[70,321],[61,365],[58,420]],[[276,286],[281,334],[327,355]],[[401,301],[442,305],[460,339],[470,418],[615,426]],[[281,335],[281,404],[290,469],[639,469]],[[666,286],[666,355],[664,427],[639,469]]];
+// Revised north parking access and main entrance.
+paths[1]=[];paths[12]=[[73,294],[73,309]];
+for(const i of [5,6,7,8])paths[i][0][1]=76;
+const npcs=Array.from({length:20},(_,i)=>{let route=paths[[0,2,3,4,5,7][i%6]],a=route[Math.min(1,route.length-2)],z=route[Math.min(2,route.length-1)];return{x:a[0]*2,y:a[1]*2,a:a.map(x=>x*2),z:z.map(x=>x*2),phase:i*.87}});
+function rect(x,y,w,h,color,r=0){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}function text(t,x,y,size=14,color='#23463b'){ctx.fillStyle=color;ctx.font=`bold ${size}px system-ui`;ctx.textAlign='center';ctx.fillText(t,x,y)}
+function blocked(x,y){return x<115||x>1380||y<80||y>960||[...solids,...barriers].some(b=>x+p.r>b.x&&x-p.r<b.x+b.w&&y+p.r>b.y&&y-p.r<b.y+b.h)}
+function pathDistance(x,y){let best=Infinity;for(let line of paths)for(let i=1;i<line.length;i++){let ax=line[i-1][0]*2,ay=line[i-1][1]*2,bx=line[i][0]*2,by=line[i][1]*2,dx=bx-ax,dy=by-ay,t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy)));best=Math.min(best,Math.hypot(x-ax-t*dx,y-ay-t*dy))}return best}
+let pumaStep=0,pumaMoving=false,pumaFace=1,spawnGrace=0;
+const RECORD_KEY='acatlan-records-v19';
+let records={},storageOK=true,hits=0,shield=false,boost=0,reveal=0,usedPowers={},runPoints=Array(missions.length).fill(0),lastResult=null;
+const helpers=[{id:'roky',x:650,y:226,color:'#65d9cd'},{id:'sor',x:570,y:395,color:'#be9bff'},{id:'pika',x:1068,y:357,color:'#f4d447'}];
+function loadRecords(){try{let raw=JSON.parse(localStorage.getItem(RECORD_KEY)||'{}');if(raw&&typeof raw==='object'&&!Array.isArray(raw)){for(const m of missions){let r=raw[m.n];if(r&&Number.isFinite(r.points)&&r.points>=0&&Number.isFinite(r.grade)&&r.grade>=6&&r.grade<=10&&Number.isFinite(r.seconds)&&r.seconds>0)records[m.n]=r}}}catch(e){storageOK=false}}
+function bestText(){let r=records[missions[lvl].n];$('#personalBest').textContent=r?`Récord ${missions[lvl].n}: ${r.grade.toFixed(1)} · ${r.points} pts · ${r.seconds.toFixed(1)} s`:`Récord ${missions[lvl].n}: consigue tu primera marca`;}
+function nearestPaper(){return papers.filter(q=>!q.got).sort((a,b)=>Math.hypot(p.x-a.x,p.y-a.y)-Math.hypot(p.x-b.x,p.y-b.y))[0]}
+function powerHud(){for(const [id,value,active] of [['roky',shield?'Escudo listo':usedPowers.roky?'Escudo usado':'Busca a Roky',shield],['sor',reveal>0?`Pista: ${Math.ceil(reveal)} s`:usedPowers.sor?'Pista usada':'Busca a Sor Juana',reveal>0],['pika',boost>0?`Turbo: ${Math.ceil(boost)} s`:usedPowers.pika?'Turbo usado':'Busca a Pikachu',boost>0]]){let el=$('#'+id+'Status');el.textContent=value;el.className=active?'active':usedPowers[id]?'used':''}}
+function activatePower(id){if(mode!=='play'||usedPowers[id])return;if(id==='sor'&&!nearestPaper())return;usedPowers[id]=true;if(id==='roky'){shield=true;$('#message').textContent='Roky te protege: el próximo choque no te penaliza.'}if(id==='sor'){reveal=8;$('#message').textContent='Sor Juana: sigue la dirección de la hoja iluminada.'}if(id==='pika'){boost=6;$('#message').textContent='¡Turbo de Pikachu! Velocidad extra durante 6 segundos.'}powerHud()}
+function reset(){$('#briefingFacts').classList.add('hidden');spawnGrace=2.5;pumaStep=0;pumaMoving=false;pumaFace=1;let m=missions[lvl];releaseJoystick();p.x=m.start[0];p.y=m.start[1];timer=m.time;energy=100;elapsed=0;cool=0;hits=0;shield=false;boost=0;reveal=0;usedPowers={};waypoint=null;lastResult=null;runPoints[lvl]=0;score=runPoints.reduce((a,b)=>a+b,0);papers=m.pages.map(([x,y])=>({x,y,got:false}));$('#dest').textContent=m.n;$('#level').textContent=`${lvl+1}/${missions.length}`;$('#message').textContent=`Nivel ${lvl+1}: ${m.label} · ${m.pages.length} hojas · ${m.crowd} estudiantes · choques: −${m.penalty} s`;mode='play';$('#overlay').classList.add('hidden');$('#resultPanel').classList.add('hidden');$('#retry').classList.add('hidden');Object.keys(keys).forEach(k=>keys[k]=false);bestText();hud()}
+function gradeRun(seconds,collisions,budget){return Math.round(Math.max(6,10-Math.max(0,seconds-budget*.65)*6/budget-collisions*.5)*10)/10}
+function finish(win){if(mode!=='play')return;mode=win?'win':'lost';releaseJoystick();Object.keys(keys).forEach(k=>keys[k]=false);let m=missions[lvl],count=papers.filter(q=>q.got).length;$('#overlay').classList.remove('hidden');$('#resultPanel').classList.remove('hidden');$('#retry').classList.add('hidden');$('#recordNotice').textContent='';
+ if(win){let grade=gradeRun(elapsed,hits,m.time),points=Math.round(grade*100+timer*10),prev=records[m.n];let improved=!prev||points>prev.points||(points===prev.points&&elapsed<prev.seconds);runPoints[lvl]=points;score=runPoints.reduce((a,b)=>a+b,0);lastResult={grade,points,seconds:elapsed,hits};if(improved){records[m.n]={grade,points,seconds:elapsed};try{localStorage.setItem(RECORD_KEY,JSON.stringify(records));storageOK=true}catch(e){storageOK=false}}$('#grade').textContent=grade.toFixed(1)+' / 10';$('#title').textContent=lvl===missions.length-1?'¡Completaste los 10 niveles!':grade===10?'¡Diez de calificación!':'¡Llegaste a clase!';$('#resultStats').textContent=`${elapsed.toFixed(1)} s · ${hits} choques · ${m.pages.length}/${m.pages.length} hojas · ${points} pts`;
+ let target=m.time*.65,tip=hits?`Evita ${hits===1?'ese choque':'los '+hits+' choques'} para subir tu calificación.`:elapsed>target?`Para un 10, baja tu tiempo a ${target.toFixed(1)} s: ${Math.ceil(elapsed-target)} s menos.`:'¡Recorrido perfecto! Ahora intenta superar tus puntos.';$('#description').textContent=tip+(lvl===missions.length-1?` Total de los 10 niveles: ${score} pts.`:'');$('#recordNotice').textContent=(improved?'¡Nuevo récord personal!':'Tu récord sigue en '+prev.points+' pts.')+(!storageOK?' Marca guardada solo durante esta sesión.':'');saveProgress(lvl===missions.length-1?0:lvl+1);$('#retry').classList.remove('hidden');$('#start').textContent=lvl===missions.length-1?'Nueva vuelta':'Siguiente clase';
+ }else{$('#grade').textContent='Tiempo agotado';$('#title').textContent='¡Vuelve a intentarlo!';$('#resultStats').textContent=`${count}/${m.pages.length} hojas · ${hits} choques`;$('#description').textContent=count<m.pages.length?'Busca primero las hojas. Sor Juana puede orientarte.':'Ya tenías la tarea: ve directo al círculo dorado del salón.';$('#start').textContent='Reintentar ahora'}bestText();hud()}
+function hud(){$('#time').textContent=`${Math.ceil(timer)} s`;$('#time').classList.toggle('urgent',timer<=10);$('#energy').classList.toggle('lowEnergy',energy<20);$('#papers').textContent=`${papers.filter(q=>q.got).length} / ${missions[lvl].pages.length}`;$('#energy').textContent=`${Math.round(energy)}%`;$('#runTarget').textContent=`Para un 10: ≤ ${(missions[lvl].time*.65).toFixed(1)} s · 0 choques`;powerHud()}
+let joystickActive=false,joyX=0,joyY=0;
+function takeHit(){if(cool>0||spawnGrace>0)return;cool=1.7;if(shield){shield=false;$('#message').textContent='¡Roky bloqueó el choque! Sin penalización.'}else{hits++;timer=Math.max(0,timer-missions[lvl].penalty);$('#message').textContent=`¡Choque! −${missions[lvl].penalty} segundos. Busca un espacio para pasar.`}}
+function update(dt){if(mode!=='play')return;pumaMoving=false;dt=Math.max(0,Math.min(dt,.05));elapsed+=dt;spawnGrace=Math.max(0,spawnGrace-dt);timer=Math.max(0,timer-dt);cool=Math.max(0,cool-dt);boost=Math.max(0,boost-dt);reveal=Math.max(0,reveal-dt);if(timer<=0){finish(false);return}
+ for(const h of helpers)if(Math.hypot(p.x-h.x,p.y-h.y)<30)activatePower(h.id);
+ let dx=joystickActive?joyX:(keys.right?1:0)-(keys.left?1:0),dy=joystickActive?joyY:(keys.down?1:0)-(keys.up?1:0),len=Math.hypot(dx,dy),run=keys.run&&energy>0&&len;
+ let wet=puddles.some(q=>((p.x-q.x)/q.rx)**2+((p.y-q.y)/q.ry)**2<1),speed=(run?230:145)*(boost>0?1.55:1)*(wet?.42:1);energy=Math.max(0,Math.min(100,energy+(run?-30:19)*dt));const oldPX=p.x,oldPY=p.y;if(len){if(Math.abs(dx)>.1)pumaFace=dx<0?-1:1;dx=dx/len*speed*dt;dy=dy/len*speed*dt;if(!blocked(p.x+dx,p.y))p.x+=dx;if(!blocked(p.x,p.y+dy))p.y+=dy}
+ const travelled=Math.hypot(p.x-oldPX,p.y-oldPY);pumaMoving=travelled>.01;pumaStep+=travelled*.19;
+ for(const n of activeNpcs()){let t=(Math.sin(elapsed*missions[lvl].pace+n.phase)+1)/2;n.x=n.a[0]+(n.z[0]-n.a[0])*t;n.y=n.a[1]+(n.z[1]-n.a[1])*t;if(Math.hypot(p.x-n.x,p.y-n.y)<20)takeHit()}
+ if(timer<=0){finish(false);return}papers.forEach(q=>{if(!q.got&&Math.hypot(p.x-q.x,p.y-q.y)<25){q.got=true;$('#message').textContent='¡Hoja recuperada! '+papers.filter(q=>q.got).length+' de '+papers.length+'.'}});if(!nearestPaper())reveal=0;
+ let m=missions[lvl];if(Math.hypot(p.x-m.x,p.y-m.y)<24){if(papers.every(q=>q.got)){finish(true);return}else if(!usedPowers.sor||reveal<=0)$('#message').textContent='Ya estás en tu salón, pero faltan hojas de la tarea.'}hud()}
+function drawPowers(c,scale,sy){c.save();for(const h of helpers){if(usedPowers[h.id])continue;c.strokeStyle=h.color;c.lineWidth=2;c.setLineDash([3,3]);c.beginPath();c.ellipse(h.x*scale,(h.y+7)*sy,23*scale,23*sy,0,0,Math.PI*2);c.stroke()}c.setLineDash([]);if(shield||boost>0){c.strokeStyle=shield?'#48ddd1':'#ffe364';c.lineWidth=3;c.beginPath();c.ellipse(p.x*scale,p.y*sy,17*scale,17*sy,0,0,Math.PI*2);c.stroke()}
+ const q=reveal>0?nearestPaper():null;if(q){const angle=Math.atan2(q.y-p.y,q.x-p.x),len=Math.min(65,Math.hypot(q.x-p.x,q.y-p.y)),x=p.x+Math.cos(angle)*len,y=p.y+Math.sin(angle)*len;c.strokeStyle='#6436b4';c.lineWidth=3;c.beginPath();c.moveTo(p.x*scale,p.y*sy);c.lineTo(x*scale,y*sy);c.stroke();c.beginPath();c.moveTo((x-10*Math.cos(angle-.6))*scale,(y-10*Math.sin(angle-.6))*sy);c.lineTo(x*scale,y*sy);c.lineTo((x-10*Math.cos(angle+.6))*scale,(y-10*Math.sin(angle+.6))*sy);c.stroke();c.beginPath();c.ellipse(q.x*scale,q.y*sy,18*scale,18*sy,0,0,Math.PI*2);c.stroke()}c.restore()}
+// Campus artwork is cached once. Coordinates align with the labeled reference.
+let campus;
+function makeCampus(){campus=document.createElement('canvas');campus.width=W*2;campus.height=H*2;let c=campus.getContext('2d');c.scale(2,2);
+const box=(x,y,w,h,color,r=0)=>{c.fillStyle=color;c.beginPath();c.roundRect(x,y,w,h,r);c.fill()};const label=(t,x,y,size=13,color='#365641')=>{c.font=`600 ${size}px Arial`;c.textAlign='center';c.lineJoin='round';c.strokeStyle='#f5f2df';c.lineWidth=Math.min(3,size*.15);c.strokeText(t,x,y);c.fillStyle=color;c.fillText(t,x,y)};
+box(0,0,W,H,'#00572e');box(101,35,1301,946,'#87bd4e',28);
+// Perimeter streets and parking courts.
+for(let [x,y,w,h] of [[42,0,48,1050],[1405,0,75,1050],[0,990,1566,60]])box(x,y,w,h,'#485f56');c.setLineDash([15,18]);c.strokeStyle='#d0cfb3';c.lineWidth=2;for(let x of [66,1443]){c.beginPath();c.moveTo(x,0);c.lineTo(x,1050);c.stroke()}c.setLineDash([]);
+for(let [x,y,w,h] of [[180,18,397,109],[590,18,353,116],[1109,12,270,114],[1280,694,100,225]]){box(x,y,w,h,'#727b70',6);for(let row=0;row<2;row++)for(let j=0;j<Math.floor(w/20)-1;j++){let xx=x+12+j*20,yy=y+9+row*(h-35);c.strokeStyle='#c0c7ac';c.lineWidth=1;c.strokeRect(xx,yy,16,27);if((j+row)%5!==0){box(xx+2,yy+3,11,21,['#e5dfce','#a7b8b6','#c3b077','#596a78','#baa99e'][j%5],2);box(xx+3,yy+8,9,7,'#455b59',1)}}}
+// Unified paths: draw every outline first so intersections stay open.
+const plazas=[[580,394,150,164],[1129,195,181,166],[935,76,185,137],[275,122,185,105],[1115,396,166,142]];
+for(const [x,y,w,h] of plazas){box(x-4,y-4,w+8,h+8,'#395c41',8);box(x,y,w,h,'#eee4ce',5)}
+for(const [color,width] of [['#395c41',68],['#f6efd9',62],['#c9b99a',51],['#e4d4ac',47]]){
+ c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';
+ for(const line of paths){c.beginPath();line.forEach(([x,y],i)=>i?c.lineTo(x*2,y*2):c.moveTo(x*2,y*2));c.stroke()}
+}
+// Athletic area: oval track, field, courts, pool and covered gym.
+box(630,685,419,232,'#bd785c',110);for(let i=0;i<4;i++){c.strokeStyle='#f0d2ac';c.lineWidth=1.5;c.beginPath();c.roundRect(636+i*9,691+i*9,407-i*18,220-i*18,104-i*9);c.stroke()}box(675,730,327,142,'#7f9e61',64);c.strokeStyle='#e0e7c5';c.lineWidth=2;c.strokeRect(737,749,205,105);c.beginPath();c.moveTo(839,749);c.lineTo(839,854);c.stroke();c.beginPath();c.arc(839,801,25,0,7);c.stroke();c.strokeRect(737,771,25,60);c.strokeRect(917,771,25,60);label('PISTA DE ATLETISMO',839,940,15);
+// American football field and four compact courts beside the east path.
+{
+ const x=166,y=740,w=244,h=154;
+ box(x-5,y-5,w+10,h+10,'#eadcba',3);box(x,y,w,h,'#397b49',1);
+ const end=23,inner=w-2*end;
+ box(x,y,end,h,'#295d3c');box(x+w-end,y,end,h,'#295d3c');
+ for(let i=0;i<10;i++){if(i%2===0)box(x+end+i*inner/10,y,inner/10,h,'#458851')}
+ c.strokeStyle='#f7efd8';c.lineWidth=1.5;c.strokeRect(x+2,y+2,w-4,h-4);
+ for(let i=0;i<=10;i++){
+  const xx=x+end+i*inner/10;c.beginPath();c.moveTo(xx,y+3);c.lineTo(xx,y+h-3);c.stroke();
+  if(i>0&&i<10){const yard=10*Math.min(i,10-i);label(String(yard),xx,y+19,7,'#fff4da');label(String(yard),xx,y+h-13,7,'#fff4da')}
+ }
+ for(let i=1;i<50;i++){
+  const xx=x+end+i*inner/50;
+  for(const yy of [y+49,y+h-49]){c.beginPath();c.moveTo(xx,yy-2);c.lineTo(xx,yy+2);c.stroke()}
+ }
+ for(const xx of [x-9,x+w+9]){c.strokeStyle='#efd467';c.lineWidth=2;c.beginPath();c.moveTo(xx,y+h/2-13);c.lineTo(xx,y+h/2+13);c.moveTo(xx,y+h/2);c.lineTo(xx+(xx<x?7:-7),y+h/2);c.stroke()}
+ label('FÚTBOL AMERICANO',x+w/2,y+h+24,12);
+}
+for(let i=0;i<4;i++){
+ const x=429,y=713+i*57,w=102,h=43,tennis=i<2;
+ box(x-3,y-3,w+6,h+6,'#e7d9b5',2);box(x,y,w,h,tennis?'#43855a':'#b77749',1);
+ c.strokeStyle='#f7ecd0';c.lineWidth=1;c.strokeRect(x+5,y+4,w-10,h-8);
+ c.beginPath();c.moveTo(x+w/2,y+4);c.lineTo(x+w/2,y+h-4);c.stroke();
+ if(tennis){
+  c.strokeRect(x+5,y+9,w-10,h-18);c.strokeRect(x+28,y+9,w-56,h-18);
+  c.beginPath();c.moveTo(x+28,y+h/2);c.lineTo(x+w-28,y+h/2);c.stroke();
+  c.strokeStyle='#243f35';c.lineWidth=2;c.beginPath();c.moveTo(x+w/2,y+1);c.lineTo(x+w/2,y+h-1);c.stroke();
+ }else{
+  c.beginPath();c.arc(x+w/2,y+h/2,7,0,Math.PI*2);c.stroke();
+  for(const sign of [1,-1]){let bx=sign===1?x+5:x+w-5;
+   c.strokeRect(sign===1?bx:bx-17,y+h/2-7,17,14);
+   c.beginPath();c.arc(bx,y+h/2,17,sign===1?-Math.PI/2:Math.PI/2,sign===1?Math.PI/2:Math.PI*1.5);c.stroke();
+   c.fillStyle='#fff0d0';c.fillRect(bx+(sign===1?2:-3),y+h/2-4,1,8);
+  }
+ }
+ label(tennis?'TENIS '+(i+1):'BÁSQUET '+(i-1),x+w/2,y+h+10,7);
+}
+box(1096,817,140,115,'#7e9a6a',3);c.strokeStyle='#d7ddbd';c.strokeRect(1104,825,124,98);c.beginPath();c.moveTo(1166,825);c.lineTo(1166,923);c.stroke();
+// Seeded vegetation: visual only, kept clear of walking routes and roofs.
+let seed=8429;function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}for(let i=0;i<1450;i++){let x=116+rnd()*1245,y=120+rnd()*815;if(pathDistance(x,y)<43||solids.some(b=>x>b.x-18&&x<b.x+b.w+18&&y>b.y-18&&y<b.y+b.h+18)||y>682||y<125)continue;let r=6+rnd()*9;c.fillStyle='#3d664e27';c.beginPath();c.ellipse(x+5,y+6,r+3,r,0,0,7);c.fill();c.fillStyle=['#668753','#759452','#587c51','#849d5b'][i%4];c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle='#4a6b3f';c.lineWidth=1.4;c.stroke();c.fillStyle='#a4b77466';c.beginPath();c.arc(x-3,y-3,r*.55,0,7);c.fill()}
+function roof(b,col){box(b.x-7,b.y-7,b.w+14,b.h+14,'#2e493b',3);box(b.x-5,b.y-5,b.w+10,b.h+10,'#f7efdb',2);box(b.x+5,b.y+8,b.w,b.h,'#304b3c42',3);box(b.x-2,b.y-2,b.w+4,b.h+4,'#e0d1b0',3);box(b.x,b.y,b.w,b.h,col,2);c.strokeStyle='#663e30';c.lineWidth=2;c.strokeRect(b.x,b.y,b.w,b.h);c.strokeStyle='#ffffff20';c.lineWidth=1;for(let y=b.y+5;y<b.y+b.h;y+=7){c.beginPath();c.moveTo(b.x+3,y);c.lineTo(b.x+b.w-3,y);c.stroke()}if(b.w>b.h){box(b.x+3,b.y+b.h/2,b.w-6,2,'#8d594855');for(let x=b.x+9;x<b.x+b.w-6;x+=16)box(x,b.y+b.h-4,8,3,'#627c7355')}else{box(b.x+b.w/2,b.y+3,2,b.h-6,'#8d594855');for(let y=b.y+9;y<b.y+b.h-6;y+=16)box(b.x+b.w-4,y,3,8,'#627c7355')}}
+for(let l of landmarks){for(let part of l.parts)roof(insetBuilding(b('',...part)),l.color);if(l.n==='Servicios'){label('Servicios',397,216,11,'#294d3a')}else if(l.n==='Teatro Barros Sierra'){label('Teatro Barros Sierra',(l.x+l.w/2)*2,491,10,'#294d3a')}else if(l.n==='Cafetería / Librería'){label('Cafetería',(l.x+l.w/2)*2,593,10,'#294d3a');label('Librería',(l.x+l.w/2)*2,605,10,'#294d3a')}else label(l.n,(l.x+l.w/2)*2,(l.y+l.h+10)*2,12,'#294d3a')}
+for(let bd of buildings){roof(bd,'#ae4726');let lw=bd.n.length*8+12;box(bd.x+bd.w/2-lw/2,bd.y+bd.h/2-11,lw,22,'#fff8e9f5',4);label(bd.n,bd.x+bd.w/2,bd.y+bd.h/2+5,14,'#774b39')}
+// Small illustrated landmarks replace the pink circles.
+function disc(x,y,rx,ry,fill,stroke){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke()}}
+function shape(points,fill,stroke='#29372b'){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fillStyle=fill;c.fill();c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke()}
+// Roky: the brown rock with the yellow number-eight bib.
+c.save();c.translate(650,226);
+disc(0,11,19,5,'#34493633');
+shape([[-18,8],[-16,-4],[-11,-11],[-4,-15],[8,-14],[15,-6],[19,8],[13,13],[-10,14]],'#895039');
+disc(-2,-9,11,4,'#bb7950');shape([[-8,-8],[5,-7],[8,9],[-8,10]],'#f6ce3f');
+c.font='900 16px Arial';c.textAlign='center';c.fillStyle='#277baa';c.fillText('8',0,6);
+c.restore();label('ROKY',650,257,8);
+// Sor Juana: black veil, white wimple, medallion and book.
+c.save();c.translate(570,395);
+disc(0,15,15,4,'#34493633');
+shape([[-13,15],[-12,-12],[-7,-19],[5,-20],[13,-13],[14,15]],'#303831');
+shape([[-10,-11],[-5,-15],[7,-14],[10,-9],[7,8],[-7,8]],'#fff2d8');
+disc(0,-5,7,10,'#d4aa7d','#7e684e');disc(-2.5,-6,0.8,0.7,'#453d32');disc(2.5,-6,0.8,0.7,'#453d32');c.strokeStyle='#825346';c.lineWidth=.8;c.beginPath();c.moveTo(-2,0);c.quadraticCurveTo(0,1,2,0);c.stroke();
+shape([[-12,15],[-8,4],[0,10],[8,4],[13,15]],'#efe4c9');disc(0,12,4,4,'#806347','#c6aa72');
+shape([[-14,13],[-2,15],[-2,22],[-14,20]],'#dac295');shape([[-2,15],[11,12],[11,20],[-2,22]],'#f1dfb9');
+c.restore();label('SOR JUANA',570,430,8);
+// Pikachu, proportioned to the surrounding buildings.
+c.save();c.translate(1068,357);
+disc(0,15,17,4,'#34493633');
+shape([[10,6],[19,-3],[17,5],[24,3],[18,14],[11,11]],'#f4c928');
+shape([[-10,-10],[-16,-28],[-10,-24],[-4,-10]],'#f8d72e');shape([[6,-11],[12,-30],[15,-24],[12,-7]],'#f8d72e');
+shape([[-16,-28],[-10,-24],[-9,-20],[-13,-21]],'#252e28');shape([[12,-30],[15,-24],[14,-20],[10,-23]],'#252e28');
+disc(0,7,12,11,'#f6cf28','#493d21');disc(0,-5,14,12,'#ffdb32','#493d21');
+disc(-6,-7,2,2.7,'#202921');disc(6,-7,2,2.7,'#202921');disc(-6.5,-8,0.7,0.7,'white');disc(5.5,-8,0.7,0.7,'white');
+disc(-11,0,3,3,'#e84b2a');disc(11,0,3,3,'#e84b2a');
+c.strokeStyle='#43361f';c.lineWidth=1;c.beginPath();c.moveTo(-3,1);c.quadraticCurveTo(0,4,3,1);c.stroke();
+disc(-7,16,5,2,'#e4b528','#493d21');disc(7,16,5,2,'#e4b528','#493d21');
+c.restore();label('PIKACHU',1068,386,8);
+label('FES ACATLÁN',779,154,19,'#264f3a');
+// Benches and garden details emphasize scale without blocking routes.
+for(let [x,y] of [[388,398],[446,425],[703,512],[788,477],[895,554],[1080,575],[519,574],[340,411]]){box(x,y,23,7,'#82694c',2);box(x+3,y+7,3,4,'#4b5c44');box(x+17,y+7,3,4,'#4b5c44')}
+for(let bar of barriers){box(bar.x,bar.y,bar.w,bar.h,'#555c49',2);for(let x=bar.x+3;x<bar.x+bar.w-3;x+=14)box(x,bar.y+2,7,bar.h-4,'#e7b756')}
+for(let q of puddles){c.fillStyle='#709f9f';c.beginPath();c.ellipse(q.x,q.y,q.rx,q.ry,0,0,7);c.fill();c.strokeStyle='#bad6c5';c.lineWidth=2;c.beginPath();c.ellipse(q.x-3,q.y-2,q.rx*.55,q.ry*.4,0,0,Math.PI);c.stroke()}
+label('ENTRADA PRINCIPAL',177,623,12);label('ACCESO',1361,536,12);label('ESTACIONAMIENTO',763,88,12);label('AV. JARDINES DE SAN MATEO',430,1023,15,'#e6e5cd');c.save();c.translate(1460,492);c.rotate(-Math.PI/2);label('AV. ALCANFORES',0,0,15,'#e6e5cd');c.restore();
+}
+function marker(c,x,y,r,color){c.fillStyle=color;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();c.strokeStyle='#173b30';c.lineWidth=2;c.stroke()}
+function person(x,y,shirt,player=false){ctx.fillStyle='#163f3033';ctx.beginPath();ctx.ellipse(x+2,y+11,11,5,0,0,7);ctx.fill();rect(x-7,y-2,14,17,shirt,5);rect(x-5,y+12,4,6,'#29433a');rect(x+2,y+12,4,6,'#29433a');ctx.fillStyle='#e5bb94';ctx.beginPath();ctx.arc(x,y-7,7,0,7);ctx.fill();rect(x-7,y-13,14,5,'#384333',3);if(player)rect(x-9,y+2,5,9,'#f8e3a1',2)}
+// Vector puma: distance-driven gait stays still when blocked or paused.
+function drawPuma(c,x,y){
+ const moving=mode==='play'&&pumaMoving,step=moving?Math.sin(pumaStep):0,bob=moving?Math.abs(Math.cos(pumaStep))*1.3:0;
+ c.save();c.translate(x,y);c.lineCap='round';c.lineJoin='round';
+ const oval=(x,y,rx,ry,color,outline=true)=>{c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=color;c.fill();if(outline){c.strokeStyle='#4c3424';c.lineWidth=1.1;c.stroke()}};
+ oval(0,10,12,4,'#203e3544',false);
+ if(boost>0&&moving){c.strokeStyle='#ffe874';c.lineWidth=1.4;for(let i=0;i<3;i++){c.beginPath();c.moveTo(-pumaFace*(14+i*3),-5+i*5);c.lineTo(-pumaFace*(21+i*3),-5+i*5);c.stroke()}}
+ // Long curved tail with dark tip.
+ c.strokeStyle='#4c3424';c.lineWidth=5;c.beginPath();c.moveTo(-pumaFace*6,5);c.bezierCurveTo(-pumaFace*19,9,-pumaFace*21,-3+step*2,-pumaFace*16,-5+step*2);c.stroke();
+ c.strokeStyle='#bd884b';c.lineWidth=3;c.stroke();oval(-pumaFace*16,-5+step*2,2.2,2.2,'#735036',false);
+ // Alternating feet and arms.
+ oval(-5,8+step*3,3.4,4.2,'#d7a760');oval(5,8-step*3,3.4,4.2,'#d7a760');
+ oval(-5,11+step*3,4,2.4,'#fff0cb');oval(5,11-step*3,4,2.4,'#fff0cb');
+ c.translate(pumaFace*(moving?1.5:0),-bob);
+ oval(-9,-1-step*3,3,4.4,'#d7a760');oval(9,-1+step*3,3,4.4,'#d7a760');
+ // Gold athletic shirt with a dark blue P.
+ c.fillStyle='#edc34e';c.strokeStyle='#4c3424';c.lineWidth=1.1;c.beginPath();c.roundRect(-7,-5,14,14,4);c.fill();c.stroke();
+ c.fillStyle='#223c50';c.fillRect(-6,6,12,3);c.font='900 8px Arial';c.textAlign='center';c.fillText('P',0,4);
+ // Rounded cougar ears, cream muzzle, short whiskers.
+ oval(-8,-16,4,4.5,'#ba874e');oval(8,-16,4,4.5,'#ba874e');oval(-8,-16,2,2.6,'#60432f',false);oval(8,-16,2,2.6,'#60432f',false);
+ oval(0,-11,10.5,9.5,'#d8ad6e');oval(-3.5,-7,4.7,3.7,'#fff0cc',false);oval(3.5,-7,4.7,3.7,'#fff0cc',false);
+ oval(-4,-12,1.7,2.3,'#263a30',false);oval(4,-12,1.7,2.3,'#263a30',false);oval(-4.4,-12.8,.6,.7,'white',false);oval(3.6,-12.8,.6,.7,'white',false);
+ c.fillStyle='#624234';c.beginPath();c.moveTo(-2,-8);c.lineTo(2,-8);c.lineTo(0,-6);c.closePath();c.fill();
+ c.strokeStyle='#624234';c.lineWidth=.7;c.beginPath();c.moveTo(0,-6);c.lineTo(0,-4.7);c.moveTo(-3,-5);c.quadraticCurveTo(0,-3,3,-5);c.stroke();
+ for(const sign of [-1,1]){c.beginPath();c.moveTo(sign*6,-7);c.lineTo(sign*11,-8);c.moveTo(sign*6,-5);c.lineTo(sign*11,-4);c.stroke()}
+ if(cool>0){c.strokeStyle='#fff9de';c.lineWidth=1.6;c.beginPath();c.arc(0,-5,18,0,Math.PI*2);c.stroke()}
+ c.restore();
+}
+function drawWorld(c,width,height,showPuma=false){if(!campus)makeCampus();c.clearRect(0,0,width,height);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(campus,0,0,width,height);const scale=width/W,sy=height/H;const small=width<600;let rr=small?6:8;
+drawPowers(c,scale,sy);
+// All dynamic markers use the same coordinates in both maps.
+for(let n of activeNpcs()){let x=n.x*scale,y=n.y*sy;c.fillStyle='#f1bd91';c.beginPath();c.arc(x,y-2,small?2:3,0,7);c.fill();c.fillStyle='#713f52';c.fillRect(x-2,y,4,small?5:7)}
+for(let q of papers){if(q.got)continue;let x=q.x*scale,y=q.y*sy;c.fillStyle='#fff9d9';c.strokeStyle='#8d640c';c.lineWidth=1.5;c.beginPath();c.roundRect(x-rr,y-rr-2,rr*2,rr*2+4,2);c.fill();c.stroke();c.strokeStyle='#bc8e2c';c.lineWidth=1;for(let d of [-2,2]){c.beginPath();c.moveTo(x-rr+3,y+d);c.lineTo(x+rr-3,y+d);c.stroke()}}
+let m=missions[lvl],gx=m.x*scale,gy=m.y*sy;c.fillStyle='#efb738';c.strokeStyle='#453c1b';c.lineWidth=2;c.beginPath();c.arc(gx,gy,rr+3,0,7);c.fill();c.stroke();c.font=`bold ${small?10:13}px system-ui`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#fffbe6';c.strokeText(m.n,gx,gy-rr-8);c.fillStyle='#193d2b';c.fillText(m.n,gx,gy-rr-8);
+if(waypoint){let wx=waypoint.x*scale,wy=waypoint.y*sy;c.strokeStyle='#ffec6d';c.lineWidth=4;c.beginPath();c.arc(wx,wy,16,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(wx-23,wy);c.lineTo(wx+23,wy);c.moveTo(wx,wy-23);c.lineTo(wx,wy+23);c.stroke()}let px=p.x*scale,py=p.y*sy;if(showPuma){c.save();c.scale(scale,sy);drawPuma(c,p.x,p.y);c.restore();return}c.fillStyle=cool>0?'#f39469':'#fffefa';c.strokeStyle='#174c3d';c.lineWidth=2.5;c.beginPath();c.arc(px,py,rr+1,0,7);c.fill();c.stroke();c.fillStyle='#db9d21';c.beginPath();c.arc(px,py,rr*.45,0,7);c.fill();c.font=`bold ${small?9:12}px system-ui`;c.strokeStyle='#fffbe6';c.lineWidth=3;c.strokeText('TÚ',px,py+rr+13);c.fillStyle='#163f2d';c.fillText('TÚ',px,py+rr+13)}
+function draw(){
+ const d=Math.min(devicePixelRatio||1,3),sx=vw/W,sy=vh/H,fit=Math.max(sx,sy),z=fit*zoom;
+ const visibleW=vw/z,visibleH=vh/z;
+ cam.x=Math.max(0,Math.min(W-visibleW,p.x-visibleW/2));
+ cam.y=Math.max(0,Math.min(H-visibleH,p.y-visibleH/2));
+ ctx.save();ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,vw,vh);
+ ctx.translate(-cam.x*z,-cam.y*z);ctx.scale(z,z);
+ drawWorld(ctx,W,H,true);ctx.restore();drawMiniMap();
+}
+function drawOverview(){const cv=$('#overview');const width=cv.getBoundingClientRect().width||vw,dpr=Math.min(devicePixelRatio||1,3);cv.width=Math.round(width*dpr);cv.height=Math.round(width*H/W*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);drawWorld(c,width,width*H/W)}
+function resize(){let r=canvas.getBoundingClientRect();vw=r.width;vh=r.height;let d=Math.min(devicePixelRatio||1,3);canvas.width=vw*d;canvas.height=vh*d;ctx.setTransform(d,0,0,d,0,0)}window.addEventListener('resize',resize);resize();function frame(t){let dt=Math.min((t-last)/1000,.04);last=t;update(dt);draw();requestAnimationFrame(frame)}requestAnimationFrame(frame);const mapping={ArrowUp:'up',w:'up',ArrowDown:'down',s:'down',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',Shift:'run'};window.addEventListener('keydown',e=>{let k=mapping[e.key];if(k){e.preventDefault();keys[k]=true}if(e.key==='Escape'&&mode==='play')pause()});window.addEventListener('keyup',e=>{let k=mapping[e.key];if(k)keys[k]=false});document.querySelectorAll('[data-key]').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys[b.dataset.key]=true});for(let ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys[b.dataset.key]=false)});function pause(){releaseJoystick();Object.keys(keys).forEach(k=>keys[k]=false);if(mode==='play'){mode='paused';$('#overlay').classList.remove('hidden');$('#resultPanel').classList.add('hidden');$('#retry').classList.add('hidden');$('#title').textContent='Un respiro';$('#description').textContent='El reloj está detenido.';$('#start').textContent='Continuar'}}$('#pause').onclick=pause;$('#mobilePause').onclick=pause;window.addEventListener('blur',()=>{if(mode==='play')pause()});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});$('#start').onclick=()=>{if(mode==='paused'){mode='play';$('#overlay').classList.add('hidden');return}if(mode==='win'){lvl++;if(lvl>=missions.length){lvl=0;score=0;runPoints=Array(missions.length).fill(0)}showBriefing();return}reset()};$('#restart').onclick=reset;$('#retry').onclick=reset;let mapWasPlaying=false;
+function openMap(){mapWasPlaying=mode==='play';if(mapWasPlaying)pause();releaseJoystick();$('#mapDialog').showModal();drawOverview()}
+$('#mapBtn').onclick=openMap;
+$('#closeMap').onclick=()=>$('#mapDialog').close();
+$('#mapDialog').addEventListener('close',()=>{if(mapWasPlaying&&mode==='paused'){mode='play';$('#overlay').classList.add('hidden')}mapWasPlaying=false});
+// Evita gestos de ampliación accidental en Safari iOS sin bloquear el desplazamiento normal.
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
+for(const el of [document.querySelector('.stage'),document.querySelector('.controls')]){
+  el.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+  el.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+}
+let lastControlTap=0;
+document.querySelector('.controls').addEventListener('touchend',e=>{
+ const now=Date.now();if(now-lastControlTap<290)e.preventDefault();lastControlTap=now;
+},{passive:false});
+// Cámara fija: el minimapa reemplaza los controles de zoom.
+zoom=2.8;
+function drawMiniMap(){
+ const cv=$('#miniMap');if(!cv)return;const c=cv.getContext('2d');
+ c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cv.width,cv.height);
+ drawWorld(c,cv.width,cv.height);
+ const sx=cv.width/W,sy=cv.height/H;
+ const fit=Math.max(vw/W,vh/H),z=fit*zoom;
+ const w=Math.min(W,vw/z),h=Math.min(H,vh/z);
+ c.strokeStyle='#ffffff';c.lineWidth=5;c.strokeRect(cam.x*sx,cam.y*sy,w*sx,h*sy);
+ c.fillStyle='#ffffff';c.strokeStyle='#173b33';c.lineWidth=3;
+ c.beginPath();c.arc(p.x*sx,p.y*sy,7,0,Math.PI*2);c.fill();c.stroke();
+}
+$('#miniMapButton').addEventListener('click',openMap);
+const joystick=$('#joystick'),knob=$('#joystickKnob');
+const overview=$('#overview');overview.addEventListener('click',e=>{let r=overview.getBoundingClientRect();waypoint={x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};drawOverview();$('#mapHelp').textContent='Marca amarilla: punto elegido · Cierra el mapa para continuar';});
+let pinchDist=0;overview.addEventListener('touchstart',e=>{if(e.touches.length===2)pinchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)},{passive:true});overview.addEventListener('touchend',()=>{pinchDist=0},{passive:true});
+let joystickPointer=null;
+function moveJoystick(e){const r=joystick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+(r.height-20)/2;let x=e.clientX-cx,y=e.clientY-cy;const radius=Math.min(r.width,r.height-20)*.32,mag=Math.hypot(x,y);if(mag>radius){x=x/mag*radius;y=y/mag*radius}joyX=x/radius;joyY=y/radius;knob.style.transform=`translate(${x}px,${y}px)`;}
+function releaseJoystick(e){if(joystickPointer!==null&&(!e||e.pointerId===joystickPointer)){joystickActive=false;joystickPointer=null;joyX=joyY=0;knob.style.transform='translate(0px,0px)'}}
+joystick.addEventListener('pointerdown',e=>{e.preventDefault();joystickPointer=e.pointerId;joystickActive=true;joystick.setPointerCapture(e.pointerId);moveJoystick(e)});
+joystick.addEventListener('pointermove',e=>{if(e.pointerId===joystickPointer)moveJoystick(e)});
+for(const eventName of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(eventName,releaseJoystick);
+window.addEventListener('blur',()=>releaseJoystick());
+
+
+const levelTips=[
+ 'Mueve al pumita con el joystick. Recoge las tres hojas blancas y entra al círculo dorado del A6. Puedes consultar el mapa: el reloj se detiene.',
+ 'Prueba CORRER mientras te mueves. Suelta el botón para recuperar energía; no hace falta correr todo el recorrido.',
+ 'Antes de salir, mira el mapa general y decide el orden de las hojas. Puedes tocar el mapa para marcar un punto.',
+ 'Ahora son cuatro hojas. Acércate a Sor Juana si necesitas una pista: indica la dirección de la hoja más cercana.',
+ 'Hay más estudiantes en los pasillos. Espera un hueco o rodéalos; Roky puede protegerte de un choque.',
+ 'Combina tramos caminando y corriendo. Pikachu te da seis segundos de turbo, útiles para un tramo despejado.',
+ 'Cinco hojas repartidas por el campus. Tienes un poco más de tiempo porque el recorrido es más largo: planea antes de salir.',
+ 'Los estudiantes se mueven más rápido. Guarda energía para los espacios despejados y evita cruzarte de frente.',
+ 'El A14 está al este. Revisa dónde terminarás de recoger las hojas para no tener que volver sobre tus pasos.',
+ 'Seis hojas y veinte estudiantes. Es el recorrido más largo: organiza la ruta y aprovecha los poderes para llegar al A13.'
+];
+function showBriefing(){
+ releaseJoystick();Object.keys(keys).forEach(k=>keys[k]=false);mode='briefing';
+ const m=missions[lvl];p.x=m.start[0];p.y=m.start[1];papers=m.pages.map(([x,y])=>({x,y,got:false}));timer=m.time;energy=100;elapsed=0;cool=0;shield=false;boost=0;reveal=0;usedPowers={};waypoint=null;pumaMoving=false;
+ for(const n of activeNpcs()){const t=(Math.sin(n.phase)+1)/2;n.x=n.a[0]+(n.z[0]-n.a[0])*t;n.y=n.a[1]+(n.z[1]-n.a[1])*t}
+ $('#level').textContent=`${lvl+1}/10`;$('#dest').textContent=m.n;
+ $('#overlay').classList.remove('hidden');$('#resultPanel').classList.add('hidden');$('#retry').classList.add('hidden');
+ $('#title').textContent=`${lvl+1}. ${m.label}`;
+ $('#description').textContent=levelTips[lvl];
+ $('#briefingFacts').textContent=`${lvl<3?'APRENDE':lvl<6?'PRACTICA':lvl<9?'RETO':'EXAMEN FINAL'} · ${m.pages.length} hojas · ${m.time} s · ${m.crowd} estudiantes · −${m.penalty} s por choque`;
+ $('#briefingFacts').classList.remove('hidden');$('#start').textContent=lvl===0?'¡Vamos al A6!':'Empezar nivel';
+ $('#message').textContent='Revisa el mapa y tu objetivo. El reloj empezará cuando pulses el botón.';bestText();hud();
+}
+
+loadRecords();
+try{const progress=JSON.parse(localStorage.getItem(PROGRESS_KEY)||'null');if(progress&&Number.isInteger(progress.level)&&progress.level>0&&progress.level<missions.length){lvl=progress.level;if(Array.isArray(progress.points)&&progress.points.length===missions.length)runPoints=progress.points.map(v=>Number.isFinite(v)&&v>=0?v:0);$('#title').textContent=`Nivel ${lvl+1}: ${missions[lvl].label}`;$('#description').textContent=`Tu avance está guardado. Recoge ${missions[lvl].pages.length} hojas y llega al ${missions[lvl].n}.`;$('#start').textContent='Continuar aventura'}}catch(e){storageOK=false}
+p.x=missions[lvl].start[0];p.y=missions[lvl].start[1];papers=missions[lvl].pages.map(([x,y])=>({x,y,got:false}));timer=missions[lvl].time;$('#dest').textContent=missions[lvl].n;$('#level').textContent=`${lvl+1}/${missions.length}`;
+bestText();hud();makeCampus();showBriefing();
+window.gameDebug={get state(){return{mode,lvl,p,timer,papers,energy}},blocked,missions,buildings,solids};
+</script></html>
